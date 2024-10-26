@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> <!-- Set character encoding to UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design for mobile -->
+    <title>Fibonacci Spiral Visualization</title> <!-- Title of the webpage -->
+    
+    <!-- Link to PyScript CSS for styling -->
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css">
+    <!-- Link to PyScript JS for functionality -->
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <style>
+        /* Basic styles for body to center content and apply background and font */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            background: #2c2f33; /* Dark background */
+            color: #ffffff; /* Light text */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* Styles for the main heading */
+        h1 {
+            color: #ff4757; /* Bright red for the title */
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        /* Styles for form and output sections */
+        form, .output {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #444; /* Dark border */
+            background: #3c4043; /* Darker background for forms */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+        /* Styles for labels */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff; /* White labels */
+        }
+        /* Styles for number input */
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #555; /* Light border */
+            border-radius: 4px;
+            background: #2c2f33; /* Dark background */
+            color: #ffffff; /* White text in input */
+        }
+        /* Styles for buttons */
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #ff4757; /* Bright red button */
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+        button:hover {
+            background-color: #e84118; /* Darker red on hover */
+        }
+        /* Styles for output section */
+        .output {
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        /* Styles for ASCII art output */
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre; /* Preserve whitespace for ASCII art */
+            background: #3c4043; /* Dark background for ASCII art */
+            padding: 10px;
+            border: 1px solid #444; /* Dark border */
+            border-radius: 8px;
+            overflow: auto; /* Allow scrolling if content overflows */
+            margin-top: 10px;
+            color: #ffffff; /* White text */
+        }
+    </style>
+</head>
+<body>
+    <h1>Fibonacci Spiral Visualization</h1>
+    <p>Generate Fibonacci sequence up to a certain number of terms</p>
+
+    <form>
+        <label for="terms">Number of terms:</label>
+        <input type="number" id="terms" min="1" value="10" required> <!-- Input for number of terms -->
+        <button type="button" id="generateButton">Generate</button> <!-- Button to trigger Fibonacci generation -->
+    </form>
+
+    <div class="output">
+        <h3>Fibonacci Sequence:</h3>
+        <div id="fibonacciOutput"></div> <!-- Output area for the Fibonacci sequence -->
+    </div>
+
+    <div class="ascii-art" id="asciiArt"></div> <!-- Output area for ASCII art representation -->
+
+    <!-- PyScript for Fibonacci sequence generation -->
+    <py-script>
+        from js import document
+        from pyscript import Element
+        import random
+
+        def fibonacci(n):
+            fib_sequence = [0, 1]  # Start with the first two Fibonacci numbers
+            for i in range(2, n):
+                fib_sequence.append(fib_sequence[-1] + fib_sequence[-2])  # Generate next Fibonacci number
+            return fib_sequence[:n]  # Return the sequence up to n terms
+
+        def generateFibonacci(event):
+            terms = int(document.getElementById("terms").value)  # Get user input for number of terms
+            sequence = fibonacci(terms)  # Generate Fibonacci sequence
+            document.getElementById("fibonacciOutput").innerHTML = ', '.join(map(str, sequence))  # Display the sequence
+            ascii_art = drawFibonacciSpiralASCII(sequence)  # Generate ASCII art from the sequence
+            document.getElementById("asciiArt").innerText = ascii_art  # Display ASCII art
+
+        def drawFibonacciSpiralASCII(sequence):
+            art = ""  # Initialize an empty string for ASCII art
+            characters = ['*', '#', '@', '$', '%', '&', '+', '=', '?', '!']  # Set of characters to use for ASCII art
+            max_value = max(sequence) if sequence else 1  # Determine the maximum Fibonacci number generated
+            for i in range(1, max_value + 1):
+                random_char = random.choice(characters)  # Randomly choose a character
+                random_length = random.randint(1, i)  # Random length for each line
+                art += random_char * random_length + "\n"  # Build the line for ASCII art
+            return art  # Return the constructed ASCII art
+
+        # Bind the function to the button click using .onclick
+        Element("generateButton").element.onclick = generateFibonacci
+    </py-script>
+</body>
+</html>
